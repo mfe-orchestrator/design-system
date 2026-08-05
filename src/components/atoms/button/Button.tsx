@@ -1,0 +1,31 @@
+import { Slot } from "@radix-ui/react-slot"
+import * as React from "react"
+import { cn } from "@/utils/styleUtils"
+import { ButtonVariants } from "./ButtonVariants"
+import { IButtonProps } from "./IButtonProps"
+
+export const Button: React.FC<IButtonProps> = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonProps>(
+    ({ className, variant, size, asChild = false, href, disabled, type, id, dataTestId, ...props }, ref) => {
+        const Comp = asChild ? Slot : "button"
+
+        if (href) {
+            return <a className={cn(ButtonVariants({ variant, size }), className)} href={href} id={id} data-testid={dataTestId || id} ref={ref as React.Ref<HTMLAnchorElement>} {...props} />
+        }
+
+        return (
+            <Comp
+                className={cn(ButtonVariants({ variant, size }), className)}
+                ref={ref as React.Ref<HTMLButtonElement>}
+                disabled={disabled}
+                type={type}
+                id={id}
+                data-testid={dataTestId || id}
+                {...props}
+            />
+        )
+    }
+)
+
+Button.displayName = "Button"
+
+export default Button
