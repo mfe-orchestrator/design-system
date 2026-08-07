@@ -14,7 +14,19 @@ export interface SidebarNavItemProps {
     action?: () => void
 }
 
-export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+/** Stato interno della sidebar passato agli slot liberi */
+export interface SidebarSlotState {
+    isCollapsed?: boolean
+    isMobile: boolean
+}
+
+/**
+ * Uno slot accetta un nodo, oppure una funzione se il contenuto deve reagire allo
+ * stato che vive dentro la sidebar (collasso e viewport mobile).
+ */
+export type SidebarSlot = React.ReactNode | ((state: SidebarSlotState) => React.ReactNode)
+
+export interface SidebarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
     isCollapsed?: boolean
     toggleCollapsed?: () => void
     /** Titolo mostrato accanto al logo */
@@ -25,14 +37,21 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
     mainNavItems?: SidebarNavItemProps[]
     /** Voci secondarie (es. link a documentazione) mostrate sopra il footer */
     secondaryNavItems?: SidebarNavItemProps[]
-    /** Contenuto libero nel footer (es. user menu, theme toggle) */
-    footer?: React.ReactNode
+    /**
+     * Contenuto libero nel blocco secondario, sopra le secondaryNavItems: serve ai
+     * comandi che non sono voci di navigazione (selettore lingua, toggle tema).
+     */
+    secondaryContent?: SidebarSlot
+    /** Contenuto libero nel footer (es. user menu) */
+    footer?: SidebarSlot
     /** Renderer opzionale per integrare un router nelle voci di navigazione */
     renderLink?: NavItemProps["renderLink"]
 }
 
+const renderSlot = (slot: SidebarSlot | undefined, state: SidebarSlotState): React.ReactNode => (typeof slot === "function" ? slot(state) : slot)
+
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-    ({ className, title, logo, sidebarHeader, mainNavItems, secondaryNavItems, footer, isCollapsed, toggleCollapsed, renderLink, ...props }, ref) => {
+    ({ className, title, logo, sidebarHeader, mainNavItems, secondaryNavItems, secondaryContent, footer, isCollapsed, toggleCollapsed, renderLink, ...props }, ref) => {
         const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches)
         const [isMenuVisible, setIsMenuVisible] = useState(false)
 
@@ -58,6 +77,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 	`
 
         const sidebarStyle = `md:h-sidebar md:py-6 group ${!isCollapsed ? "md:w-64 md:px-3" : "md:w-20 md:px-2"}`
+
+        const slotState: SidebarSlotState = { isCollapsed, isMobile }
 
         return (
             <div ref={ref} id="sidebar_container" className={cn(navBarStyle, sidebarStyle, isMenuVisible && "h-sidebar", className)} {...props}>
@@ -94,15 +115,16 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                         </nav>
                     )}
 
-                    {secondaryNavItems && secondaryNavItems.length > 0 && (
+                    {(secondaryContent || (secondaryNavItems && secondaryNavItems.length > 0)) && (
                         <div className="flex flex-col gap-1 border-t border-divider py-2">
-                            {secondaryNavItems.map(item => (
+                            {renderSlot(secondaryContent, slotState)}
+                            {secondaryNavItems?.map(item => (
                                 <NavItem key={item.path ?? item.name} type="secondary" href={item.path} icon={item.icon} name={item.name} action={item.action} isSidebarCollapsed={isCollapsed} />
                             ))}
                         </div>
                     )}
 
-                    {footer && <div className="border-t border-divider pt-2">{footer}</div>}
+                    {footer && <div className="border-t border-divider pt-2">{renderSlot(footer, slotState)}</div>}
                 </div>
 
                 <Button
