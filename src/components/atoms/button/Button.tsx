@@ -5,11 +5,17 @@ import { ButtonVariants } from "./ButtonVariants"
 import { IButtonProps } from "./IButtonProps"
 
 export const Button: React.FC<IButtonProps> = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonProps>(
-    ({ className, variant, size, asChild = false, href, disabled, type, id, dataTestId, ...props }, ref) => {
+    ({ className, variant, size, asChild = false, href, disabled, type, id, dataTestId, renderLink, ...props }, ref) => {
         const Comp = asChild ? Slot : "button"
 
         if (href) {
-            return <a className={cn(ButtonVariants({ variant, size }), className)} href={href} id={id} data-testid={dataTestId || id} ref={ref as React.Ref<HTMLAnchorElement>} {...props} />
+            const linkClassName = cn(ButtonVariants({ variant, size }), className)
+
+            if (renderLink) {
+                return renderLink({ href, className: linkClassName, children: props.children, id, dataTestId: dataTestId || id })
+            }
+
+            return <a className={linkClassName} href={href} id={id} data-testid={dataTestId || id} ref={ref as React.Ref<HTMLAnchorElement>} {...props} />
         }
 
         return (

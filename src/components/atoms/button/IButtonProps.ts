@@ -7,4 +7,9 @@ export interface IButtonProps extends React.HTMLAttributes<HTMLButtonElement | H
     disabled?: boolean
     type?: "button" | "submit" | "reset"
     dataTestId?: string
+    /**
+     * Renderer opzionale usato quando è presente `href`, per integrare il router
+     * dell'applicazione (es. il Link di react-router) al posto dell'anchor nativo.
+     */
+    renderLink?: (props: { href: string; className: string; children?: React.ReactNode; id?: string; dataTestId?: string }) => React.ReactElement
 }
