@@ -39,7 +39,14 @@ export const NavItem = React.forwardRef<HTMLButtonElement | HTMLAnchorElement | 
         if (type === "secondary") {
             if (href) {
                 return (
-                    <a ref={ref as React.Ref<HTMLAnchorElement>} href={href} target="_blank" rel="noreferrer" className={cn(navItemVariants({ type, active, isSidebarCollapsed }), className)} {...props}>
+                    <a
+                        ref={ref as React.Ref<HTMLAnchorElement>}
+                        href={href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={cn(navItemVariants({ type, active, isSidebarCollapsed }), className)}
+                        {...props}
+                    >
                         {content}
                     </a>
                 )

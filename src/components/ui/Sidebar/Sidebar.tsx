@@ -63,9 +63,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             <div ref={ref} id="sidebar_container" className={cn(navBarStyle, sidebarStyle, isMenuVisible && "h-sidebar", className)} {...props}>
                 <div className={`flex items-center justify-between md:mb-12 ${isCollapsed ? "md:justify-center" : "md:justify-start"}`}>
                     <div className="flex items-center md:p-2 gap-3">
-                        {logo ?? (
-                            <div className="h-8 w-8 rounded-sm bg-orchestrator-accent flex items-center justify-center text-white font-bold">{!isCollapsed ? "MF" : "M"}</div>
-                        )}
+                        {logo ?? <div className="h-8 w-8 rounded-sm bg-orchestrator-accent flex items-center justify-center text-white font-bold">{!isCollapsed ? "MF" : "M"}</div>}
                         {!isCollapsed && title && <span className="text-lg font-semibold text-orchestrator-secondary">{title}</span>}
                     </div>
                     <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuVisible(!isMenuVisible)}>
@@ -75,10 +73,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
                 {sidebarHeader}
 
-                <div
-                    id="sidebar_menu"
-                    className={`${isMenuVisible ? "flex" : "hidden"} flex-col flex-grow border-t border-divider overflow-auto md:flex md:border-0 pt-2 md:pt-0 mt-4 md:mt-0`}
-                >
+                <div id="sidebar_menu" className={`${isMenuVisible ? "flex" : "hidden"} flex-col flex-grow border-t border-divider overflow-auto md:flex md:border-0 pt-2 md:pt-0 mt-4 md:mt-0`}>
                     {mainNavItems && (
                         <nav className="flex flex-col gap-1 flex-grow">
                             {mainNavItems.map(item => (
@@ -102,15 +97,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                     {secondaryNavItems && secondaryNavItems.length > 0 && (
                         <div className="flex flex-col gap-1 border-t border-divider py-2">
                             {secondaryNavItems.map(item => (
-                                <NavItem
-                                    key={item.path ?? item.name}
-                                    type="secondary"
-                                    href={item.path}
-                                    icon={item.icon}
-                                    name={item.name}
-                                    action={item.action}
-                                    isSidebarCollapsed={isCollapsed}
-                                />
+                                <NavItem key={item.path ?? item.name} type="secondary" href={item.path} icon={item.icon} name={item.name} action={item.action} isSidebarCollapsed={isCollapsed} />
                             ))}
                         </div>
                     )}
