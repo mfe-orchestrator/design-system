@@ -1,12 +1,13 @@
-import { type VariantProps } from "class-variance-authority"
-import * as React from "react"
+import type { VariantProps } from "class-variance-authority"
+import type * as React from "react"
 import { cn } from "@/utils/styleUtils"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 import { BadgeVariants } from "./BadgeVariants"
 
-export interface IBadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof BadgeVariants> {}
+export interface IBadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof BadgeVariants>, TestIdProps {}
 
-export const Badge: React.FC<IBadgeProps> = ({ className, variant, size, ...props }) => {
-    return <div className={cn("badge", BadgeVariants({ variant, size }), className)} {...props} />
+export const Badge: React.FC<IBadgeProps> = ({ className, variant, size, dataTestId, ...props }) => {
+    return <div {...props} className={cn("badge", BadgeVariants({ variant, size }), className)} data-testid={getTestId({ dataTestId, ...props })} />
 }
 
 Badge.displayName = "Badge"

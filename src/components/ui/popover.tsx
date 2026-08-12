@@ -2,13 +2,17 @@ import * as PopoverPrimitive from "@radix-ui/react-popover"
 import * as React from "react"
 
 import { cn } from "@/utils/styleUtils"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 
 const Popover = PopoverPrimitive.Root
 
-const PopoverTrigger = PopoverPrimitive.Trigger
+const PopoverTrigger = React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger> & TestIdProps>(
+    ({ dataTestId, ...props }, ref) => <PopoverPrimitive.Trigger ref={ref} {...props} data-testid={getTestId({ dataTestId, ...props })} />
+)
+PopoverTrigger.displayName = PopoverPrimitive.Trigger.displayName
 
-const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Content>, React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>>(
-    ({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Content>, React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content> & TestIdProps>(
+    ({ className, align = "center", sideOffset = 4, dataTestId, ...props }, ref) => (
         <PopoverPrimitive.Portal>
             <PopoverPrimitive.Content
                 ref={ref}
@@ -19,6 +23,7 @@ const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive
                     className
                 )}
                 {...props}
+                data-testid={getTestId({ dataTestId, ...props })}
             />
         </PopoverPrimitive.Portal>
     )

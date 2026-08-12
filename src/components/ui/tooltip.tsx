@@ -2,15 +2,19 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 import * as React from "react"
 
 import { cn } from "@/utils/styleUtils"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 
 const TooltipProvider = TooltipPrimitive.Provider
 
 const Tooltip = TooltipPrimitive.Root
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+const TooltipTrigger = React.forwardRef<React.ComponentRef<typeof TooltipPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger> & TestIdProps>(
+    ({ dataTestId, ...props }, ref) => <TooltipPrimitive.Trigger ref={ref} {...props} data-testid={getTestId({ dataTestId, ...props })} />
+)
+TooltipTrigger.displayName = TooltipPrimitive.Trigger.displayName
 
-const TooltipContent = React.forwardRef<React.ComponentRef<typeof TooltipPrimitive.Content>, React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>>(
-    ({ className, sideOffset = 4, ...props }, ref) => (
+const TooltipContent = React.forwardRef<React.ComponentRef<typeof TooltipPrimitive.Content>, React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content> & TestIdProps>(
+    ({ className, sideOffset = 4, dataTestId, ...props }, ref) => (
         <TooltipPrimitive.Content
             ref={ref}
             sideOffset={sideOffset}
@@ -19,6 +23,7 @@ const TooltipContent = React.forwardRef<React.ComponentRef<typeof TooltipPrimiti
                 className
             )}
             {...props}
+            data-testid={getTestId({ dataTestId, ...props })}
         />
     )
 )
