@@ -1,5 +1,5 @@
-import { cn } from "@/utils/styleUtils"
 import { cva } from "class-variance-authority"
+import { cn } from "@/utils/styleUtils"
 
 const baseStyle = `
 	w-full
@@ -18,11 +18,13 @@ const baseStyle = `
 	focus-visible:ring-offset-2
 `
 
+// `:not(.sr-only)` evita che l'etichetta riservata agli screen reader,
+// usata quando la sidebar è compressa, venga resa di nuovo visibile.
 const labelStyle = `
-	[&_span]:w-full
-	[&_span]:text-start
-	[&_span]:overflow-hidden
-	[&_span]:text-ellipsis
+	[&>span:not(.sr-only)]:w-full
+	[&>span:not(.sr-only)]:text-start
+	[&>span:not(.sr-only)]:overflow-hidden
+	[&>span:not(.sr-only)]:text-ellipsis
 `
 
 export const navItemVariants = cva(cn(baseStyle, labelStyle), {

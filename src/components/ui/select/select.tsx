@@ -1,7 +1,7 @@
 import * as SelectPrimitive from "@radix-ui/react-select"
-import { VariantProps } from "class-variance-authority"
+import type { VariantProps } from "class-variance-authority"
 import * as React from "react"
-import { selectTriggerVariants } from "./partials/selectTrigger/selecTriggerVariants"
+import type { selectTriggerVariants } from "./partials/selectTrigger/selecTriggerVariants"
 
 const SelectGroup = SelectPrimitive.Group
 const SelectValue = SelectPrimitive.Value

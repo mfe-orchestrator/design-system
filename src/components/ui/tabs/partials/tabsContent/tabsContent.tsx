@@ -2,6 +2,7 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 import * as React from "react"
 
 import { cn } from "@/utils/styleUtils"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 
 const baseStyle = `
 	mt-4
@@ -14,9 +15,11 @@ const baseStyle = `
 	focus-visible:ring-offset-2
 `
 
-const TabsContent = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.Content>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>>(({ className, ...props }, ref) => (
-    <TabsPrimitive.Content ref={ref} className={cn(baseStyle, className)} {...props} />
-))
+const TabsContent = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.Content>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content> & TestIdProps>(
+    ({ className, dataTestId, ...props }, ref) => (
+        <TabsPrimitive.Content ref={ref} className={cn(baseStyle, className)} {...props} data-testid={getTestId({ dataTestId, ...props, name: props.value })} />
+    )
+)
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
 export { TabsContent }

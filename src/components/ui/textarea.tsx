@@ -1,12 +1,11 @@
 import * as React from "react"
 
 import { cn } from "@/utils/styleUtils"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, TestIdProps {}
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ className, dataTestId, required, ...props }, ref) => {
     return (
         <textarea
             className={cn(
@@ -14,11 +13,13 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                 className
             )}
             ref={ref}
+            required={required}
+            aria-required={required || undefined}
             {...props}
+            data-testid={getTestId({ dataTestId, ...props })}
         />
     )
-  }
-)
+})
 Textarea.displayName = "Textarea"
 
 export { Textarea }

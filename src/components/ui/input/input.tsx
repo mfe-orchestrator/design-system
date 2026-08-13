@@ -1,29 +1,46 @@
 import { VariantProps } from "class-variance-authority"
 import * as React from "react"
 import { cn } from "@/utils/styleUtils"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 import { inputVariants } from "./inputVariants"
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, VariantProps<typeof inputVariants> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, VariantProps<typeof inputVariants>, TestIdProps {
     fullWidth?: boolean
     onDebounce?: (value: string | number | readonly string[]) => void | Promise<void>
     debounceTime?: number
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, layoutSize, fullWidth, onDebounce, debounceTime = 500, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, layoutSize, fullWidth, onDebounce, debounceTime = 500, dataTestId, required, ...props }, ref) => {
+    // Il callback vive in una ref: se finisse nelle dipendenze dell'effect, una
+    // funzione ricreata a ogni render farebbe ripartire il timer all'infinito
+    // (loop di richieste anche a valore invariato).
+    const onDebounceRef = React.useRef(onDebounce)
+    onDebounceRef.current = onDebounce
+
+    const value = props.value
+
     React.useEffect(() => {
-        if (!onDebounce) return
-        //console.log("Checking repository name availability for:", repositoryName)
-        const timeoutId = setTimeout(async () => {
-            //console.log("Set timeout started", repositoryName)
-            if (props.value !== undefined) {
-                onDebounce?.(props.value)
+        if (!onDebounceRef.current) return
+        const timeoutId = setTimeout(() => {
+            if (value !== undefined) {
+                onDebounceRef.current?.(value)
             }
         }, debounceTime)
 
         return () => clearTimeout(timeoutId)
-    }, [props.value, debounceTime])
+    }, [value, debounceTime])
 
-    return <input type={type} className={cn(inputVariants({ layoutSize, fullWidth }), className)} ref={ref} {...props} />
+    return (
+        <input
+            type={type}
+            className={cn(inputVariants({ layoutSize, fullWidth }), className)}
+            ref={ref}
+            required={required}
+            aria-required={required || undefined}
+            {...props}
+            data-testid={getTestId({ dataTestId, ...props })}
+        />
+    )
 })
 Input.displayName = "Input"
 

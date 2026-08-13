@@ -1,13 +1,15 @@
 import * as React from "react"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 import { Button } from "../atoms/button/Button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./dialog"
 
-interface DeleteConfirmationDialogProps {
+interface DeleteConfirmationDialogProps extends TestIdProps {
     isOpen: boolean
     onOpenChange: (open: boolean) => void
     onDelete: () => Promise<void> | void
     onDeleteSuccess?: () => void
     onCancel?: () => void
+    id?: string
     title?: string
     description?: string
     cancelLabel?: string
@@ -21,6 +23,8 @@ export function DeleteConfirmationDialog({
     onDelete,
     onDeleteSuccess,
     onCancel,
+    id,
+    dataTestId,
     title = "Delete Confirmation",
     description = "Are you sure you want to delete",
     cancelLabel = "Cancel",
@@ -28,6 +32,7 @@ export function DeleteConfirmationDialog({
     deletingLabel = "Deleting..."
 }: DeleteConfirmationDialogProps) {
     const [isDeleting, setIsDeleting] = React.useState(false)
+    const testId = getTestId({ dataTestId, id, name: "delete-confirmation-dialog" })
 
     const handleDelete = async () => {
         try {
@@ -47,16 +52,17 @@ export function DeleteConfirmationDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent id={id} dataTestId={testId} closeLabel={cancelLabel} aria-busy={isDeleting || undefined}>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                 </DialogHeader>
-                <p>{description}</p>
+                {/* DialogDescription viene collegato al dialog tramite aria-describedby */}
+                <DialogDescription className="text-foreground">{description}</DialogDescription>
                 <DialogFooter>
-                    <Button variant="secondary" onClick={handleCancel} disabled={isDeleting}>
+                    <Button variant="secondary" onClick={handleCancel} disabled={isDeleting} dataTestId={`${testId}-cancel`}>
                         {cancelLabel}
                     </Button>
-                    <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+                    <Button variant="destructive" onClick={handleDelete} disabled={isDeleting} aria-busy={isDeleting || undefined} dataTestId={`${testId}-confirm`}>
                         {isDeleting ? deletingLabel : deleteLabel}
                     </Button>
                 </DialogFooter>

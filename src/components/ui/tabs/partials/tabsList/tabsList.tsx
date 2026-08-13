@@ -1,13 +1,14 @@
-import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
+import type { VariantProps } from "class-variance-authority"
+import * as React from "react"
 
-import { cn } from "@/utils/styleUtils"
-import { tabsListVariants } from "./tabsListVariants"
-import { VariantProps } from "class-variance-authority"
 import { TabsContext } from "@/components/ui/tabs/tabs"
+import { cn } from "@/utils/styleUtils"
+import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
+import { tabsListVariants } from "./tabsListVariants"
 
-const TabsList = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.List>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & VariantProps<typeof tabsListVariants>>(
-    ({ className, ...props }, ref) => {
+const TabsList = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.List>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & VariantProps<typeof tabsListVariants> & TestIdProps>(
+    ({ className, dataTestId, ...props }, ref) => {
         const { layoutSize, tabsListPosition } = React.useContext(TabsContext)
         const fullWidth = tabsListPosition === "fullWidth"
 
@@ -26,7 +27,7 @@ const TabsList = React.forwardRef<React.ComponentRef<typeof TabsPrimitive.List>,
 
         return (
             <div className={getContainerClasses()}>
-                <TabsPrimitive.List ref={ref} className={cn(tabsListVariants({ layoutSize, fullWidth }), className)} {...props} />
+                <TabsPrimitive.List ref={ref} className={cn(tabsListVariants({ layoutSize, fullWidth }), className)} {...props} data-testid={getTestId({ dataTestId, ...props })} />
             </div>
         )
     }
