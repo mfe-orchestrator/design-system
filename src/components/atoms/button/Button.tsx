@@ -5,7 +5,7 @@ import { getTestId } from "@/utils/testIdUtils"
 import { ButtonVariants } from "./ButtonVariants"
 import { IButtonProps } from "./IButtonProps"
 
-export const Button: React.FC<IButtonProps> = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonProps>(
+export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonProps>(
     ({ className, variant, size, asChild = false, href, disabled, type, id, dataTestId, target, rel, renderLink, ...props }, ref) => {
         const Comp = asChild ? Slot : "button"
         const testId = getTestId({ dataTestId, id, ...props })
