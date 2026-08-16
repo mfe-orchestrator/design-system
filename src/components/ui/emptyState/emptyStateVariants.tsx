@@ -21,33 +21,22 @@ export const emptyStateVariants = cva("flex flex-col items-center justify-center
     }
 })
 
-export const emptyStateIconVariants = cva("flex items-center justify-center rounded-full", {
-    variants: {
-        tone: {
-            primary: "bg-primary/15 text-primary",
-            accent: "bg-accent/15 text-accent",
-            destructive: "bg-destructive/15 text-destructive",
-            /** Icona smorzata, per i vuoti che non chiedono nessuna azione */
-            muted: "bg-muted text-foreground-secondary"
-        },
-        size: {
-            sm: "size-12 [&_svg]:size-5",
-            default: "size-16 [&_svg]:size-7",
-            lg: "size-20 [&_svg]:size-8"
-        }
-    },
-    defaultVariants: {
-        tone: "primary",
-        size: "default"
-    }
-})
+/**
+ * La scala dei vuoti (sm/default/lg) è più corta di quella di `IconTile`, che deve coprire anche
+ * le tessere piccole delle liste: la corrispondenza è esplicita perché i nomi non coincidono.
+ */
+export const emptyStateIconTileSize = {
+    sm: "md",
+    default: "lg",
+    lg: "xl"
+} as const
 
 /** Icona senza cerchio: resta solo il colore, la dimensione la porta il glifo */
 export const emptyStateBareIconVariants = cva("", {
     variants: {
         tone: {
             primary: "text-primary",
-            accent: "text-accent",
+            accent: "text-accent-foreground",
             destructive: "text-destructive",
             muted: "text-foreground-secondary"
         },

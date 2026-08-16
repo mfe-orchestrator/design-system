@@ -7,24 +7,45 @@ type TableProps = React.HTMLAttributes<HTMLTableElement> &
     TestIdProps & {
         /** Nome accessibile del contenitore scrollabile della tabella */
         scrollAreaLabel?: string
+        /** Racchiude la tabella nella cornice arrotondata usata dalle pagine di elenco */
+        framed?: boolean
+        /** Come la cornice tratta una tabella più larga del contenitore: `clip` la taglia, `x` la fa scorrere. Ha effetto solo con `framed`. */
+        scroll?: "clip" | "x"
     }
 
-const Table = React.forwardRef<HTMLTableElement, TableProps>(({ className, dataTestId, scrollAreaLabel, ...props }, ref) => {
+const Table = React.forwardRef<HTMLTableElement, TableProps>(({ className, dataTestId, scrollAreaLabel, framed = false, scroll = "clip", ...props }, ref) => {
     const regionLabel = scrollAreaLabel ?? props["aria-label"]
     // Il wrapper scrollabile diventa una region raggiungibile da tastiera (WCAG 2.1.1)
     // solo quando ha un nome accessibile: una region anonima e focusabile è rumore per gli screen reader.
     const regionProps = regionLabel ? ({ role: "region", "aria-label": regionLabel, tabIndex: 0 } as const) : {}
 
-    return (
+    const scrollArea = (
         <div className="relative w-full overflow-auto" {...regionProps}>
             <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} data-testid={getTestId({ dataTestId, ...props })} />
         </div>
     )
+
+    if (!framed) return scrollArea
+
+    // La cornice è un div esterno e non classi aggiunte al contenitore scrollabile:
+    // `overflow-hidden` sullo stesso elemento annullerebbe lo scorrimento delle tabelle larghe.
+    return <div className={cn("rounded-md border-2 border-border", scroll === "x" ? "overflow-x-auto" : "overflow-hidden")}>{scrollArea}</div>
 })
 Table.displayName = "Table"
 
-const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement> & TestIdProps>(({ className, dataTestId, ...props }, ref) => (
-    <thead ref={ref} className={cn("[&_tr]:border-b-2", className)} {...props} data-testid={getTestId({ dataTestId, ...props })} />
+/** Segnala alle righe che si trovano nell'intestazione, dove il fondo colorato è il default. */
+const TableHeaderContext = React.createContext(false)
+
+type TableHeaderProps = React.HTMLAttributes<HTMLTableSectionElement> &
+    TestIdProps & {
+        /** Fondo colorato sulla riga di intestazione: `false` per le tabelle che vogliono un'intestazione neutra */
+        tinted?: boolean
+    }
+
+const TableHeader = React.forwardRef<HTMLTableSectionElement, TableHeaderProps>(({ className, dataTestId, tinted = true, ...props }, ref) => (
+    <TableHeaderContext.Provider value={tinted}>
+        <thead ref={ref} className={cn("[&_tr]:border-b-2", className)} {...props} data-testid={getTestId({ dataTestId, ...props })} />
+    </TableHeaderContext.Provider>
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -38,13 +59,26 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
 ))
 TableFooter.displayName = "TableFooter"
 
-const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement> & TestIdProps>(({ className, dataTestId, ...props }, ref) => (
-    <tr ref={ref} className={cn("border-b transition-colors data-[state=selected]:bg-muted", className)} {...props} data-testid={getTestId({ dataTestId, ...props })} />
-))
+const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement> & TestIdProps>(({ className, dataTestId, ...props }, ref) => {
+    const tinted = React.useContext(TableHeaderContext)
+
+    // La tinta precede `className`: chi passa un altro sfondo (es. `bg-muted/60`) continua a vincere via twMerge.
+    return (
+        <tr ref={ref} className={cn("border-b transition-colors data-[state=selected]:bg-muted", tinted && "bg-primary/25", className)} {...props} data-testid={getTestId({ dataTestId, ...props })} />
+    )
+})
 TableRow.displayName = "TableRow"
 
 const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement> & TestIdProps>(({ className, dataTestId, scope = "col", ...props }, ref) => (
-    <th ref={ref} scope={scope} className={cn("h-12 px-4 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0", className)} {...props} data-testid={getTestId({ dataTestId, ...props })} />
+    <th
+        ref={ref}
+        scope={scope}
+        // Colore esplicito e non ereditato: sul fondo colorato dell'intestazione il testo deve restare leggibile
+        // anche quando la tabella sta dentro un contenitore smorzato.
+        className={cn("h-12 px-4 text-left align-middle font-medium text-foreground [&:has([role=checkbox])]:pr-0", className)}
+        {...props}
+        data-testid={getTestId({ dataTestId, ...props })}
+    />
 ))
 TableHead.displayName = "TableHead"
 

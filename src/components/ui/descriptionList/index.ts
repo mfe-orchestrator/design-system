@@ -1,0 +1,5 @@
+export type { IDescriptionItemProps } from "./DescriptionItem"
+export * from "./DescriptionItem"
+export type { IDescriptionListContextValue, IDescriptionListProps } from "./DescriptionList"
+export * from "./DescriptionList"
+export * from "./descriptionListVariants"

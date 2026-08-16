@@ -2,9 +2,9 @@ import clsx from "clsx"
 import { X } from "lucide-react"
 import type { InputHTMLAttributes } from "react"
 import { Controller, type FieldError, type FieldValues, type Path, type RegisterOptions, useFormContext } from "react-hook-form"
-import { Label } from "@/components/ui/label"
 import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 import { SelectContent } from "../ui/select/partials/selectContent/selectContent"
+import { SelectControl } from "../ui/select/partials/selectControl/selectControl"
 import { SelectItem } from "../ui/select/partials/selectItem/selectItem"
 import { SelectTrigger } from "../ui/select/partials/selectTrigger/selectTrigger"
 import { Select, SelectValue } from "../ui/select/select"
@@ -54,11 +54,8 @@ const SelectField = <T extends FieldValues>({
 
     const error = errors[name] as FieldError | undefined
     const inputId = id || name
-    const errorId = `${inputId}-error`
-    const descriptionId = `${inputId}-description`
     const testId = getTestId({ dataTestId, id, name })
     const isRequired = props.required || !!rules?.required
-    const describedBy = [description ? descriptionId : null, error ? errorId : null].filter(Boolean).join(" ") || undefined
 
     return (
         <Controller
@@ -69,25 +66,18 @@ const SelectField = <T extends FieldValues>({
                 const selectedOption = options.find(option => option.value === field.value)
 
                 return (
-                    <div className={`grid gap-1 ${containerClassName || ""}`}>
-                        {label && (
-                            <Label htmlFor={inputId} className={error ? "text-destructive" : ""}>
-                                {label}
-                                {isRequired && (
-                                    <>
-                                        <span className="text-destructive ml-1" aria-hidden="true">
-                                            *
-                                        </span>
-                                        <span className="sr-only"> ({requiredLabel})</span>
-                                    </>
-                                )}
-                            </Label>
-                        )}
-                        {description && (
-                            <p id={descriptionId} className="text-sm text-foreground-secondary">
-                                {description}
-                            </p>
-                        )}
+                    <SelectControl
+                        id={inputId}
+                        label={label}
+                        // L'etichetta segue lo stato di errore anche quando il messaggio manca,
+                        // perché `SelectControl` colora in base al testo dell'errore, non alla sua presenza.
+                        labelClassName={error ? "text-destructive" : undefined}
+                        description={description}
+                        error={error?.message}
+                        required={isRequired}
+                        requiredLabel={requiredLabel}
+                        className={containerClassName}
+                    >
                         {/* Il bottone di reset è fratello (e non figlio) del trigger: un bottone
                             annidato in un altro bottone non è markup valido né accessibile. */}
                         <div className="relative">
@@ -103,7 +93,6 @@ const SelectField = <T extends FieldValues>({
                                 <SelectTrigger
                                     id={inputId}
                                     aria-invalid={!!error}
-                                    aria-describedby={describedBy}
                                     aria-required={isRequired || undefined}
                                     dataTestId={testId}
                                     className={clsx(addClearButton && field.value && "pr-14", error && "border-destructive focus-visible:ring-destructive", className)}
@@ -150,12 +139,7 @@ const SelectField = <T extends FieldValues>({
                                 </button>
                             )}
                         </div>
-                        {error && (
-                            <p id={errorId} role="alert" className="text-sm font-medium text-destructive">
-                                {error.message}
-                            </p>
-                        )}
-                    </div>
+                    </SelectControl>
                 )
             }}
         />

@@ -1,10 +1,11 @@
 import type { VariantProps } from "class-variance-authority"
 import * as React from "react"
+import { IconTile } from "@/components/atoms/iconTile"
 import { cn } from "@/utils/styleUtils"
 import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
-import { emptyStateBareIconVariants, emptyStateDescriptionVariants, emptyStateIconVariants, emptyStateTitleVariants, emptyStateVariants } from "./emptyStateVariants"
+import { emptyStateBareIconVariants, emptyStateDescriptionVariants, emptyStateIconTileSize, emptyStateTitleVariants, emptyStateVariants } from "./emptyStateVariants"
 
-type EmptyStateTone = NonNullable<VariantProps<typeof emptyStateIconVariants>["tone"]>
+type EmptyStateTone = NonNullable<VariantProps<typeof emptyStateBareIconVariants>["tone"]>
 
 export interface IEmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title">, VariantProps<typeof emptyStateVariants>, TestIdProps {
     /** Icona mostrata sopra al testo: si passa già istanziata, es. `<PackageOpen />` */
@@ -56,9 +57,7 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
         <div {...props} id={id} className={cn(emptyStateVariants({ variant, size }), grow && "grow", className)} data-testid={testId}>
             {icon &&
                 (iconVariant === "circle" ? (
-                    <div aria-hidden="true" className={emptyStateIconVariants({ tone, size })}>
-                        {icon}
-                    </div>
+                    <IconTile icon={icon} tone={tone} size={emptyStateIconTileSize[size ?? "default"]} />
                 ) : (
                     <span aria-hidden="true" className={emptyStateBareIconVariants({ tone, size })}>
                         {icon}

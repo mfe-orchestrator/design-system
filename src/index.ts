@@ -19,14 +19,32 @@ export * from "./components/ui/alert"
 export * from "./components/ui/avatar"
 export * from "./components/ui/card"
 export * from "./components/ui/checkbox"
+// Confirm by typing
+export * from "./components/ui/confirmByTypingDialog"
+// Copyable value
+export * from "./components/ui/copyableValue"
 // Code block
 export * from "./components/ui/codeBlock"
+// Danger zone
+export * from "./components/ui/dangerZoneCard"
 export * from "./components/ui/DeleteConfirmationDialog"
+// Description list
+export * from "./components/ui/descriptionList"
 export * from "./components/ui/dialog"
 export * from "./components/ui/dropdown-menu"
 // Empty state
 export * from "./components/ui/emptyState"
 export * from "./components/ui/form"
+// Add tile
+export * from "./components/ui/addTile"
+// Numbered steps
+export * from "./components/ui/numberedSteps"
+// Search input
+export * from "./components/ui/searchInput"
+// Section header
+export * from "./components/ui/sectionHeader"
+// Stat tile
+export * from "./components/ui/statTile"
 export * from "./components/ui/input/input"
 export * from "./components/ui/input/inputVariants"
 export * from "./components/ui/label"
@@ -37,6 +55,7 @@ export * from "./components/ui/Sidebar/partials/NavItem/NavItemVariants"
 // Sidebar
 export * from "./components/ui/Sidebar/Sidebar"
 export * from "./components/ui/select/partials/selectContent/selectContent"
+export * from "./components/ui/select/partials/selectControl/selectControl"
 export * from "./components/ui/select/partials/selectItem/selectItem"
 export * from "./components/ui/select/partials/selectLabel/selectLabel"
 export * from "./components/ui/select/partials/selectScrollButtons"
