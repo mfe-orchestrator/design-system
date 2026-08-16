@@ -4,7 +4,11 @@ import * as React from "react"
 import { cn } from "@/utils/styleUtils"
 import { getTestId, type TestIdProps } from "@/utils/testIdUtils"
 
+// Con `forceMount` Radix tiene il pannello nel DOM e smette di applicare `hidden`: senza questa
+// regola i pannelli inattivi resterebbero tutti visibili in colonna e cambiare tab non farebbe niente.
+// Nasconde per display, quindi i campi restano registrati nel form.
 const baseStyle = `
+	data-[state=inactive]:hidden
 	mt-4
 	w-full
 	rounded-md
