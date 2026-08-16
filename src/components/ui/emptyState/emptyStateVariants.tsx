@@ -79,7 +79,9 @@ export const emptyStateTitleVariants = cva("text-foreground", {
 export const emptyStateDescriptionVariants = cva("text-foreground-secondary", {
     variants: {
         size: {
-            sm: "text-xs",
+            // Anche il vuoto compatto resta a text-sm: sotto questa soglia il messaggio
+            // che spiega perche' la lista e' vuota diventa il testo piu' piccolo della pagina.
+            sm: "text-sm",
             default: "text-sm",
             lg: "mx-auto max-w-md text-sm"
         }
